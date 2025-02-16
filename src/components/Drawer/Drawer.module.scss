@@ -1,0 +1,105 @@
+$screen-padding: 8px;
+$card-width: min(440px, calc(100vw - 2 * $screen-padding));
+
+.drawerContainer {
+  position: fixed;
+  inset: 0px;
+  z-index: 100;
+  //   padding: $screen-padding;
+
+  &.showDrawer {
+    background-color: rgb(0 0 0 / 0.4);
+
+    .card {
+      width: $card-width;
+    }
+  }
+}
+
+.card {
+  position: absolute;
+  height: calc(100% - 2 * $screen-padding);
+  width: 0px;
+  border-radius: 16px;
+  background-color: #fff;
+  overflow: hidden;
+  will-change: width;
+
+  &.left,
+  &.right {
+    bottom: $screen-padding;
+  }
+
+  &.left {
+    left: $screen-padding;
+  }
+
+  &.right {
+    right: $screen-padding;
+  }
+}
+
+.cardExpansionsWrapper {
+  display: flex;
+  flex-wrap: nowrap;
+  height: 100%;
+  width: 100%;
+
+  &:has(.cardExpansion.showContent:nth-of-type(2)) {
+    margin-left: -100%;
+    &:has(.cardExpansion.showContent:nth-of-type(3)) {
+      margin-left: -200%;
+      &:has(.cardExpansion.showContent:nth-of-type(4)) {
+        margin-left: -300%;
+        &:has(.cardExpansion.showContent:nth-of-type(5)) {
+          margin-left: -400%;
+        }
+      }
+    }
+  }
+}
+
+.cardExpansion {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  height: 100%;
+  width: $card-width;
+  padding: 2.5rem;
+  position: relative;
+}
+
+.cardContent {
+  flex: 1 1 0%;
+}
+
+@media only screen and (max-width: 640px) {
+  .card {
+    max-height: 75vh;
+  }
+
+  .cardExpansion {
+    padding: 1.5rem;
+  }
+}
+
+@layer transitions {
+  $duration: 300ms;
+  $timing: cubic-bezier(0.9, 0, 0.1, 1);
+  .drawerContainer {
+    transition: background-color $duration ease-in-out $duration;
+    > .card {
+      transition: width $duration $timing 0ms;
+      > .cardExpansionsWrapper {
+        transition: margin-left $duration $timing;
+      }
+    }
+
+    &.showDrawer {
+      transition: background-color $duration ease-in-out 0ms;
+      > .card {
+        transition: width $duration $timing $duration;
+      }
+    }
+  }
+}
