@@ -13,7 +13,7 @@ export function PopoverButton({
   const [show, setShow] = useState(false);
   return (
     <ClickAway className="relative" onClickOutside={() => setShow(false)}>
-      <Button filled size="sm" onClick={() => setShow(!show)} tabIndex={-1}>
+      <Button outline size="sm" onClick={() => setShow(!show)} tabIndex={-1}>
         {title}
       </Button>
       {show ? (

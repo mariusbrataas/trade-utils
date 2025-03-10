@@ -41,6 +41,7 @@ export function Button({
   iconRight,
 
   onClick,
+  toggle,
   pill,
   disabled: disabledProp,
   busy: busyProp,
@@ -54,6 +55,7 @@ export function Button({
   {
     className?: string;
     onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => any;
+    toggle?: React.Dispatch<React.SetStateAction<boolean>>;
     disabled?: boolean;
     busy?: boolean;
     pill?: boolean;
@@ -76,6 +78,7 @@ export function Button({
       {...props}
       type={type}
       onClick={event => {
+        toggle?.(prevState => !prevState);
         const result = onClick?.(event) as any;
         if (result instanceof Promise) {
           setAutoBusy(true);
@@ -101,7 +104,7 @@ export function Button({
           'border-transparent bg-slate-200 text-inherit hover:bg-gray-600/10 disabled:pointer-events-none disabled:opacity-50 dark:bg-slate-700 dark:hover:bg-slate-600',
         outline &&
           'border-slate-300 text-slate-600 hover:border-slate-500 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none dark:border-slate-700 dark:text-white dark:hover:text-white',
-        empty && 'border-transparent text-black',
+        empty && 'border-transparent text-black dark:text-white',
         text &&
           'border-transparent font-medium text-blue-500 hover:text-slate-800 disabled:pointer-events-none disabled:opacity-50 dark:text-blue-400 dark:hover:text-blue-500',
 
