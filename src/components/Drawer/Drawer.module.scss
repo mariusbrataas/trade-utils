@@ -1,104 +1,184 @@
 $screen-padding: 8px;
-$card-width: min(440px, calc(100vw - 2 * $screen-padding));
+$card-width: calc(100vw - 2 * $screen-padding);
 
 .drawerContainer {
   position: fixed;
   inset: 0px;
   z-index: 100;
-  //   padding: $screen-padding;
 
   &.showDrawer {
     background-color: rgb(0 0 0 / 0.4);
 
     .card {
-      width: $card-width;
+      // When shown, the dimensions remain,
+      // but the transform will be overridden (see below)
+      &.from-left,
+      &.from-right,
+      &.mobile-from-left,
+      &.mobile-from-right {
+        width: $card-width;
+      }
+      &.from-top,
+      &.from-bottom,
+      &.mobile-from-top,
+      &.mobile-from-bottom {
+        height: calc(75vh - 2 * $screen-padding);
+      }
     }
   }
-}
 
-.card {
-  position: absolute;
-  height: calc(100% - 2 * $screen-padding);
-  width: 0px;
-  border-radius: 16px;
-  background-color: #fff;
-  overflow: hidden;
-  will-change: width;
+  .card {
+    position: absolute;
+    border-radius: 16px;
+    overflow: hidden;
+    will-change: transform; // Only transform will change
 
-  &.left,
-  &.right {
-    bottom: $screen-padding;
-  }
+    .cardExpansionsWrapper {
+      display: flex;
+      flex-wrap: nowrap;
+      height: 100%;
+      width: 100%;
 
-  &.left {
-    left: $screen-padding;
-  }
+      // Emulate navigation, use translateX for smooth transitions
+      @for $i from 2 through 10 {
+        &:has(.cardExpansion.showContent:nth-of-type(#{$i})) {
+          transform: translateX(calc(-100% * (#{$i} - 1)));
+        }
+      }
 
-  &.right {
-    right: $screen-padding;
-  }
-}
+      .cardExpansion {
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
+        height: 100%;
+        padding: 2rem;
+        position: relative;
 
-.cardExpansionsWrapper {
-  display: flex;
-  flex-wrap: nowrap;
-  height: 100%;
-  width: 100%;
-
-  &:has(.cardExpansion.showContent:nth-of-type(2)) {
-    margin-left: -100%;
-    &:has(.cardExpansion.showContent:nth-of-type(3)) {
-      margin-left: -200%;
-      &:has(.cardExpansion.showContent:nth-of-type(4)) {
-        margin-left: -300%;
-        &:has(.cardExpansion.showContent:nth-of-type(5)) {
-          margin-left: -400%;
+        .cardContent {
+          flex: 1 1 0%;
         }
       }
     }
   }
 }
 
-.cardExpansion {
-  display: flex;
-  flex-direction: column;
-  flex-shrink: 0;
-  height: 100%;
-  width: $card-width;
-  padding: 2.5rem;
-  position: relative;
-}
+@media only screen and (min-width: 640px) {
+  .drawerContainer {
+    .card {
+      // Left/right drawers:
+      &.from-left,
+      &.from-right {
+        width: $card-width;
+        height: calc(100% - 2 * $screen-padding);
+        bottom: $screen-padding;
+      }
+      &.from-left {
+        left: $screen-padding;
+        transform: translateX(calc(-100% - #{$screen-padding}));
+      }
+      &.from-right {
+        right: $screen-padding;
+        transform: translateX(calc(100% + #{$screen-padding}));
+      }
 
-.cardContent {
-  flex: 1 1 0%;
+      // Top/bottom drawers:
+      &.from-top,
+      &.from-bottom {
+        width: calc(100% - 2 * $screen-padding);
+        height: calc(75vh - 2 * $screen-padding);
+        left: $screen-padding;
+      }
+      &.from-top {
+        top: $screen-padding;
+        transform: translateY(calc(-100% - #{$screen-padding}));
+      }
+      &.from-bottom {
+        bottom: $screen-padding;
+        transform: translateY(calc(100% + #{$screen-padding}));
+      }
+
+      .cardExpansion {
+        width: $card-width;
+      }
+    }
+  }
 }
 
 @media only screen and (max-width: 640px) {
-  .card {
-    max-height: 75vh;
-  }
+  .drawerContainer {
+    .card {
+      // Mobile left/right drawers:
+      &.mobile-from-left,
+      &.mobile-from-right {
+        width: $card-width;
+        height: calc(75vh - 2 * $screen-padding);
+        bottom: $screen-padding;
+      }
+      &.mobile-from-left {
+        left: $screen-padding;
+        transform: translateX(calc(-100% - #{$screen-padding}));
+      }
+      &.mobile-from-right {
+        right: $screen-padding;
+        transform: translateX(calc(100% + #{$screen-padding}));
+      }
 
-  .cardExpansion {
-    padding: 1.5rem;
+      // Mobile top/bottom drawers:
+      &.mobile-from-top,
+      &.mobile-from-bottom {
+        width: calc(100% - 2 * $screen-padding);
+        height: calc(75vh - 2 * $screen-padding);
+        left: $screen-padding;
+      }
+      &.mobile-from-top {
+        top: $screen-padding;
+        transform: translateY(calc(-100% - #{$screen-padding}));
+      }
+      &.mobile-from-bottom {
+        bottom: $screen-padding;
+        transform: translateY(calc(100% + #{$screen-padding}));
+      }
+
+      .cardExpansion {
+        width: $card-width;
+        padding: 1.5rem;
+      }
+    }
+  }
+}
+
+/* When the drawer is shown, override the transforms so the card slides into view */
+.drawerContainer.showDrawer {
+  .card {
+    &.from-left,
+    &.from-right,
+    &.from-top,
+    &.from-bottom,
+    &.mobile-from-left,
+    &.mobile-from-right,
+    &.mobile-from-top,
+    &.mobile-from-bottom {
+      transform: translate(0, 0);
+    }
   }
 }
 
 @layer transitions {
-  $duration: 300ms;
+  $duration: 250ms;
   $timing: cubic-bezier(0.9, 0, 0.1, 1);
   .drawerContainer {
-    transition: background-color $duration ease-in-out $duration;
+    transition: background-color $duration ease-in-out;
     > .card {
-      transition: width $duration $timing 0ms;
+      transition: transform $duration $timing;
       > .cardExpansionsWrapper {
-        transition: margin-left $duration $timing;
+        transition: transform $duration $timing;
       }
     }
 
     &.showDrawer {
       transition: background-color $duration ease-in-out 0ms;
       > .card {
-        transition: width $duration $timing $duration;
+        transition: transform $duration $timing;
       }
     }
   }

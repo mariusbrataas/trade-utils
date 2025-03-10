@@ -15,7 +15,7 @@ import { IoIosArrowForward } from 'react-icons/io';
 import { Button } from '../Button';
 import styles from './Drawer.module.scss';
 
-export const TIMING = 300;
+export const TIMING = 250;
 
 export interface ModalRef {
   close: () => Promise<void>;
@@ -24,7 +24,7 @@ export interface ModalRef {
 export type ModalRefObject = RefObject<ModalRef>;
 
 const initialDrawerContext = {
-  close: () => new Promise<void>(resolve => setTimeout(resolve, TIMING * 2))
+  close: () => new Promise<void>(resolve => setTimeout(resolve, TIMING))
 };
 
 const drawerContext = createContext(initialDrawerContext);
@@ -36,18 +36,37 @@ export function useModalRef() {
   return ref;
 }
 
+type FromPosition = 'top' | 'bottom' | 'left' | 'right';
+
+const positionToClassname: Record<FromPosition, string> = {
+  left: styles['from-left'],
+  right: styles['from-right'],
+  top: styles['from-top'],
+  bottom: styles['from-bottom']
+};
+
+const mobilePositionToClassname: Record<FromPosition, string> = {
+  left: styles['mobile-from-left'],
+  right: styles['mobile-from-right'],
+  top: styles['mobile-from-top'],
+  bottom: styles['mobile-from-bottom']
+};
+
 export function Drawer({
   children,
   busy,
   onClosed,
   onRequestClose,
-  position = 'left',
+  from,
+  mobileFrom,
   ref
 }: PropsWithChildren<{
   busy?: boolean;
   onClosed?: () => void;
   onRequestClose?: () => void;
   position?: 'left' | 'right';
+  from?: FromPosition;
+  mobileFrom?: FromPosition;
   ref?: ModalRefObject;
 }>) {
   const [show, setShow] = useState(false);
@@ -63,7 +82,7 @@ export function Drawer({
       setTimeout(() => {
         resolve();
         if (show) onClosed?.();
-      }, TIMING * 2)
+      }, TIMING)
     );
   };
 
@@ -97,11 +116,9 @@ export function Drawer({
           <div
             className={cn(
               styles.card,
-              position === 'left'
-                ? styles.left
-                : position === 'right'
-                  ? styles.right
-                  : undefined
+              'bg-white text-black shadow-xl dark:bg-slate-800 dark:text-white',
+              positionToClassname[from ?? 'left'],
+              mobilePositionToClassname[mobileFrom ?? from ?? 'bottom']
             )}
             onClick={event => event.stopPropagation()}
           >
@@ -133,7 +150,7 @@ Drawer.Content = ({
           onClick={() => {
             if (!onClose) return;
             setShow(false);
-            setTimeout(onClose, TIMING * 2);
+            setTimeout(onClose, TIMING);
           }}
           className="mb-4"
         >
