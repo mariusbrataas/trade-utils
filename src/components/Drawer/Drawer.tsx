@@ -10,12 +10,12 @@ import {
   useState
 } from 'react';
 import ReactDOM from 'react-dom';
-import { FaArrowLeft } from 'react-icons/fa6';
+import { FaArrowLeft } from 'react-icons/fa';
 import { IoIosArrowForward } from 'react-icons/io';
 import { Button } from '../Button';
 import styles from './Drawer.module.scss';
 
-export const TIMING = 250;
+export const TIMING = 300;
 
 export interface ModalRef {
   close: () => Promise<void>;
@@ -88,6 +88,21 @@ export function Drawer({
 
   useImperativeHandle(ref, () => ({ close: handleClose }), [handleClose]);
 
+  const expansionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const animateExpansion = expansionRef.current;
+    if (!animateExpansion) return;
+
+    return observeFirstChildOfLastElementResize(animateExpansion, ([entry]) => {
+      if (!entry) return;
+      animateExpansion.style.setProperty(
+        '--content-height',
+        `${entry.contentRect.height}px`
+      );
+    });
+  }, [expansionRef]);
+
   return (
     <drawerContext.Provider
       value={{
@@ -122,7 +137,13 @@ export function Drawer({
             )}
             onClick={event => event.stopPropagation()}
           >
-            <div className={styles.cardExpansionsWrapper}>{children}</div>
+            {/* <AnimateExpansion> */}
+            <div className={styles.animateExpansion} ref={expansionRef}>
+              {/* <div className={styles.cardExpansionsWrapper}> */}
+              {children}
+              {/* </div> */}
+            </div>
+            {/* </AnimateExpansion> */}
           </div>
         </div>
       </DrawerPortal>
@@ -137,27 +158,25 @@ Drawer.Content = ({
   const [show, setShow] = useState(true);
 
   return (
-    <div
-      className={cn(
-        'hideScrollbar',
-        styles.cardExpansion,
-        show && styles.showContent
-      )}
-    >
-      {onClose ? (
-        <Button
-          empty
-          onClick={() => {
-            if (!onClose) return;
-            setShow(false);
-            setTimeout(onClose, TIMING);
-          }}
-          className="mb-4"
-        >
-          <FaArrowLeft /> Go back
-        </Button>
-      ) : undefined}
-      <div className={cn(styles.cardContent)}>{children}</div>
+    <div className={cn(styles.scroller, show && styles.showContent)}>
+      <div>
+        <div className={styles.cardContent}>
+          {onClose ? (
+            <Button
+              empty
+              onClick={() => {
+                if (!onClose) return;
+                setShow(false);
+                setTimeout(onClose, TIMING);
+              }}
+              className="mb-4"
+            >
+              <FaArrowLeft /> Go back
+            </Button>
+          ) : undefined}
+          {children}
+        </div>
+      </div>
     </div>
   );
 };
@@ -217,4 +236,56 @@ function DrawerPortal({ children }: PropsWithChildren) {
   }
 
   return ReactDOM.createPortal(children, document.body);
+}
+
+type Unsubscribe = () => void;
+
+/**
+ * Observes the size of the first child of the last element in a container.
+ * If the last element changes or its first child changes, the observer is updated.
+ *
+ * @param container - The parent container element.
+ * @param callback - The ResizeObserver callback invoked when the target's size changes.
+ * @returns An object with a disconnect() method to clean up the observers.
+ */
+export function observeFirstChildOfLastElementResize(
+  container: HTMLElement,
+  callback: ResizeObserverCallback
+): Unsubscribe {
+  // Helper function: get the first child of the last element, or null if not available.
+  const getTarget = (): HTMLElement | null => {
+    const lastElement = container.lastElementChild as HTMLElement | null;
+    if (lastElement && lastElement.firstElementChild) {
+      return lastElement.firstElementChild as HTMLElement;
+    }
+    return null;
+  };
+
+  let target: HTMLElement | null = getTarget();
+
+  const resizeObserver = new ResizeObserver(callback);
+  if (target) {
+    resizeObserver.observe(target);
+  }
+
+  const mutationObserver = new MutationObserver(() => {
+    const newTarget = getTarget();
+    if (newTarget !== target) {
+      if (target) {
+        resizeObserver.unobserve(target);
+      }
+      target = newTarget;
+      if (target) {
+        resizeObserver.observe(target);
+      }
+    }
+  });
+
+  // Watch for child list changes in the container
+  mutationObserver.observe(container, { childList: true, subtree: true });
+
+  return () => {
+    mutationObserver.disconnect();
+    resizeObserver.disconnect();
+  };
 }

@@ -87,7 +87,7 @@ export function Button({
       }}
       className={cn(
         className,
-        'relative w-fit whitespace-pre border text-center text-base transition-all',
+        'relative w-fit whitespace-pre border text-center text-base transition-all [&:has(+button)]:mr-2',
 
         {
           sm: 'text-sm',

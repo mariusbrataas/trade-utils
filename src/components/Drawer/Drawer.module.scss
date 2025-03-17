@@ -1,5 +1,5 @@
 $screen-padding: 8px;
-$card-width: calc(100vw - 2 * $screen-padding);
+$card-width: calc(min(100vw - 2 * $screen-padding, 500px));
 
 .drawerContainer {
   position: fixed;
@@ -10,20 +10,8 @@ $card-width: calc(100vw - 2 * $screen-padding);
     background-color: rgb(0 0 0 / 0.4);
 
     .card {
-      // When shown, the dimensions remain,
-      // but the transform will be overridden (see below)
-      &.from-left,
-      &.from-right,
-      &.mobile-from-left,
-      &.mobile-from-right {
-        width: $card-width;
-      }
-      &.from-top,
-      &.from-bottom,
-      &.mobile-from-top,
-      &.mobile-from-bottom {
-        height: calc(75vh - 2 * $screen-padding);
-      }
+      height: auto;
+      // width: auto;
     }
   }
 
@@ -31,31 +19,30 @@ $card-width: calc(100vw - 2 * $screen-padding);
     position: absolute;
     border-radius: 16px;
     overflow: hidden;
-    will-change: transform; // Only transform will change
 
-    .cardExpansionsWrapper {
+    width: $card-width;
+
+    .animateExpansion {
       display: flex;
       flex-wrap: nowrap;
-      height: 100%;
-      width: 100%;
+      width: $card-width;
+      margin: 0px;
+      overflow: visible;
 
       // Emulate navigation, use translateX for smooth transitions
       @for $i from 2 through 10 {
-        &:has(.cardExpansion.showContent:nth-of-type(#{$i})) {
+        &:has(.scroller.showContent:nth-of-type(#{$i})) {
           transform: translateX(calc(-100% * (#{$i} - 1)));
         }
       }
 
-      .cardExpansion {
-        display: flex;
-        flex-direction: column;
+      .scroller {
+        overflow: auto;
+        width: $card-width;
         flex-shrink: 0;
-        height: 100%;
-        padding: 2rem;
-        position: relative;
 
         .cardContent {
-          flex: 1 1 0%;
+          padding: 2rem;
         }
       }
     }
@@ -65,11 +52,13 @@ $card-width: calc(100vw - 2 * $screen-padding);
 @media only screen and (min-width: 640px) {
   .drawerContainer {
     .card {
+      .animateExpansion {
+        height: calc(min(100dvh - 2 * $screen-padding, var(--content-height)));
+      }
+
       // Left/right drawers:
       &.from-left,
       &.from-right {
-        width: $card-width;
-        height: calc(100% - 2 * $screen-padding);
         bottom: $screen-padding;
       }
       &.from-left {
@@ -84,8 +73,6 @@ $card-width: calc(100vw - 2 * $screen-padding);
       // Top/bottom drawers:
       &.from-top,
       &.from-bottom {
-        width: calc(100% - 2 * $screen-padding);
-        height: calc(75vh - 2 * $screen-padding);
         left: $screen-padding;
       }
       &.from-top {
@@ -96,9 +83,35 @@ $card-width: calc(100vw - 2 * $screen-padding);
         bottom: $screen-padding;
         transform: translateY(calc(100% + #{$screen-padding}));
       }
+    }
 
-      .cardExpansion {
-        width: $card-width;
+    &.showDrawer {
+      .card {
+        // Left/right drawers:
+        &.from-left,
+        &.from-right {
+          width: $card-width;
+          height: auto; // calc(100% - 2 * $screen-padding);
+        }
+        &.from-left {
+          transform: translateX(calc(-100% - #{$screen-padding}));
+        }
+        &.from-right {
+          transform: translateX(calc(100% + #{$screen-padding}));
+        }
+
+        // Top/bottom drawers:
+        &.from-top,
+        &.from-bottom {
+          width: calc(100% - 2 * $screen-padding);
+          height: auto; // calc(75vh - 2 * $screen-padding);
+        }
+        &.from-top {
+          transform: translateY(calc(-100% - #{$screen-padding}));
+        }
+        &.from-bottom {
+          transform: translateY(calc(100% + #{$screen-padding}));
+        }
       }
     }
   }
@@ -107,11 +120,15 @@ $card-width: calc(100vw - 2 * $screen-padding);
 @media only screen and (max-width: 640px) {
   .drawerContainer {
     .card {
+      .animateExpansion {
+        height: calc(min(75vh - 2 * $screen-padding, var(--content-height)));
+      }
+
       // Mobile left/right drawers:
       &.mobile-from-left,
       &.mobile-from-right {
         width: $card-width;
-        height: calc(75vh - 2 * $screen-padding);
+        height: auto; // calc(75vh - 2 * $screen-padding);
         bottom: $screen-padding;
       }
       &.mobile-from-left {
@@ -127,7 +144,7 @@ $card-width: calc(100vw - 2 * $screen-padding);
       &.mobile-from-top,
       &.mobile-from-bottom {
         width: calc(100% - 2 * $screen-padding);
-        height: calc(75vh - 2 * $screen-padding);
+        height: auto; // calc(75vh - 2 * $screen-padding);
         left: $screen-padding;
       }
       &.mobile-from-top {
@@ -137,11 +154,6 @@ $card-width: calc(100vw - 2 * $screen-padding);
       &.mobile-from-bottom {
         bottom: $screen-padding;
         transform: translateY(calc(100% + #{$screen-padding}));
-      }
-
-      .cardExpansion {
-        width: $card-width;
-        padding: 1.5rem;
       }
     }
   }
@@ -164,20 +176,25 @@ $card-width: calc(100vw - 2 * $screen-padding);
 }
 
 @layer transitions {
-  $duration: 250ms;
-  $timing: cubic-bezier(0.9, 0, 0.1, 1);
+  $duration: 300ms;
+  $timing: cubic-bezier(0.8, 0, 0.2, 1);
   .drawerContainer {
     transition: background-color $duration ease-in-out;
-    > .card {
+
+    .card {
       transition: transform $duration $timing;
-      > .cardExpansionsWrapper {
-        transition: transform $duration $timing;
+
+      .animateExpansion {
+        transition:
+          height $duration $timing,
+          transform $duration $timing;
+        will-change: height;
       }
     }
 
     &.showDrawer {
       transition: background-color $duration ease-in-out 0ms;
-      > .card {
+      .card {
         transition: transform $duration $timing;
       }
     }
