@@ -1,5 +1,4 @@
 import { Button } from '@/components/Button';
-import { Checkbox } from '@/components/Checkbox';
 import { Drawer } from '@/components/Drawer';
 import { Pairs, Strong } from '@/components/Helpers';
 import { formatNumber, PrettyNumber } from '@/components/Num';
@@ -40,7 +39,6 @@ export default function PositionSizing() {
   const [takeProfitState, setTakeProfit] = useSearchParam<number>('tp');
   const [stopLossState, setStopLoss] = useSearchParam<number>('sl');
   const [capitalState, setCapital] = useSearchParam<number>('capital');
-  const [discrete, setDiscrete] = useSearchParam<boolean>('discrete');
   const [riskState, setRisk] = useSearchParam<number>('ra');
   const [riskIsDollars, setRiskIsDollars] = useSearchParam<boolean | undefined>(
     'rd'
@@ -88,8 +86,7 @@ export default function PositionSizing() {
   const maxAllowedPositionSize = (capital * effectiveMaxLeverage) / entry;
   const leverageLimitsRisk = computedPositionSize > maxAllowedPositionSize;
 
-  let positionSize = Math.min(computedPositionSize, maxAllowedPositionSize);
-  if (discrete) positionSize = Math.floor(positionSize);
+  const positionSize = Math.min(computedPositionSize, maxAllowedPositionSize);
 
   const actualRisk = positionSize * riskUnit;
   const positionValue = entry * positionSize;
@@ -227,12 +224,6 @@ export default function PositionSizing() {
             filled
           />
         </div>
-
-        <Checkbox
-          label="Use discrete units for position size?"
-          checked={discrete}
-          onChange={setDiscrete}
-        />
       </div>
 
       {/* Summary Section */}
@@ -485,9 +476,7 @@ function InfoButton() {
               <p>
                 The calculator factors in your chosen{' '}
                 <Strong>max leverage</Strong> to ensure that your position size
-                doesn’t exceed what your capital and leverage allow. If you opt
-                for <Strong>discrete units</Strong>, the computed position size
-                will be rounded down to a whole number.
+                doesn’t exceed what your capital and leverage allow.
               </p>
 
               <h3>Reward Insights</h3>
