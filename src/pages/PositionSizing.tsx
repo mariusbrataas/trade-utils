@@ -5,6 +5,7 @@ import { Pairs, Strong } from '@/components/Helpers';
 import { formatNumber, PrettyNumber } from '@/components/Num';
 import { PopoverButton } from '@/components/PopoverButton';
 import { Input } from '@/components/Textfield';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { useSearchParam } from '@/hooks/useSearchParameter';
 import { round } from '@/lib/utils';
 
@@ -102,6 +103,7 @@ export default function PositionSizing() {
 
   return (
     <>
+      <ThemeToggle />
       <div className="flex w-[600px] max-w-full flex-col items-start justify-between gap-7 text-left">
         <div className="flex w-full flex-1 flex-row items-center justify-between">
           <h2>Position sizing</h2>
@@ -498,17 +500,16 @@ function InfoButton() {
               <p>
                 The tool estimates your <Strong>potential profit</Strong> based
                 on the difference between your entry and take profit prices and
-                computes a <Strong>risk/reward ratio</Strong>. A visual
-                indicator (emoji) provides a quick sense of the trade’s
-                attractiveness.
+                computes a <Strong>risk/reward ratio</Strong>.
               </p>
 
               <h3>Trailing Stop</h3>
               <p>
-                This feature helps you lock in partial profits as the market
-                moves in your favor by dynamically adjusting your stop-loss. Set
-                your <Strong>Trigger Price</Strong> in risk multiples (R) to
-                define when the trailing stop should activate, and define the{' '}
+                An additional utility to help you calculate levels at which to
+                lock in partial profits as the market moves in your favor by
+                dynamically adjusting your stop-loss. Set your{' '}
+                <Strong>Trigger Price</Strong> in risk multiples (R) to define
+                when the trailing stop should activate, and define the{' '}
                 <Strong>Lock Profit</Strong> level (also in R) to secure part of
                 your gains once the trigger is hit.
               </p>
@@ -523,8 +524,7 @@ function InfoButton() {
               <p>
                 <Strong>Disclaimer:</Strong> This tool is for educational
                 purposes only and should not be considered financial advice.
-                Always do your own research and consult with a financial
-                professional before making trading decisions.
+                Always do your own research.
               </p>
 
               <p>Happy Trading!</p>

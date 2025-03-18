@@ -3,7 +3,7 @@ import type { Config } from 'tailwindcss';
 const config: Config = {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx,mdx}'],
   presets: [],
-  darkMode: 'media', //'selector', // or 'class'
+  darkMode: 'class', //'selector', // or 'class'
   theme: {
     accentColor: ({ theme }) => ({
       ...theme('colors'),
