@@ -17,7 +17,7 @@ $card-width: calc(min(100vw - 2 * $screen-padding, 500px));
 
   .card {
     position: absolute;
-    border-radius: 16px;
+    border-radius: 18px;
     overflow: hidden;
 
     width: $card-width;
