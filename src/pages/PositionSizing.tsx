@@ -5,7 +5,6 @@ import { Pairs, Strong } from '@/components/Helpers';
 import { formatNumber, PrettyNumber } from '@/components/Num';
 import { PopoverButton } from '@/components/PopoverButton';
 import { Input } from '@/components/Textfield';
-import { ThemeToggle } from '@/components/ThemeToggle';
 import { useSearchParam } from '@/hooks/useSearchParameter';
 import { round } from '@/lib/utils';
 
@@ -102,350 +101,345 @@ export default function PositionSizing() {
   const riskRewardRatio = Math.abs(takeProfit - entry) / riskUnit;
 
   return (
-    <>
-      <ThemeToggle />
-      <div className="flex w-[600px] max-w-full flex-col items-start justify-between gap-7 text-left">
-        <div className="flex w-full flex-1 flex-row items-center justify-between">
-          <h2>Position sizing</h2>
-          <InfoButton />
-        </div>
+    <div className="flex w-[600px] max-w-full flex-col items-start justify-between gap-7 text-left">
+      <div className="flex w-full flex-1 flex-row items-center justify-between">
+        <h2>Position sizing</h2>
+        <InfoButton />
+      </div>
 
-        {/* Input Section */}
-        <div className="flex w-full flex-col gap-4">
-          <div className="grid grid-cols-2 gap-3">
-            <Input
-              type="number"
-              label="Capital"
-              prefix="$"
-              placeholder={DEFAULT_VALUES.capital}
-              value={capitalState}
-              onChange={setCapital}
-              min={0}
-              max={100e6}
-              filled
-            />
-            <Input
-              type="number"
-              label="Risk amount"
-              prefix={
-                <div className="px-1 py-1" tabIndex={-1}>
-                  <PopoverButton
-                    title={riskIsDollars ? '$' : '%'}
-                    closeOnPopoverClick
-                  >
-                    <div className="flex flex-col gap-1 p-1">
-                      <Button
-                        size="sm"
-                        {...(riskIsDollars
-                          ? { filled: true }
-                          : { outline: true })}
-                        onClick={() => {
-                          if (!riskIsDollars) {
-                            setRiskIsDollars(true);
-                            setRisk(riskState == null ? undefined : riskAmount);
-                          }
-                        }}
-                        tabIndex={-1}
-                      >
-                        $
-                      </Button>
-                      <Button
-                        size="sm"
-                        {...(riskIsDollars
-                          ? { outline: true }
-                          : { filled: true })}
-                        onClick={() => {
-                          if (riskIsDollars) {
-                            setRiskIsDollars(undefined);
-                            setRisk(
-                              riskState == null ? undefined : riskPercent
-                            );
-                          }
-                        }}
-                        tabIndex={-1}
-                      >
-                        %
-                      </Button>
-                    </div>
-                  </PopoverButton>
-                </div>
-              }
-              placeholder={formatNumber(
-                riskIsDollars
-                  ? (DEFAULT_VALUES.riskPercent / 100) * capital
-                  : DEFAULT_VALUES.riskPercent
-              )}
-              value={riskState}
-              onChange={setRisk}
-              min={0}
-              max={capital}
-              status={
-                riskIsDollars
-                  ? `≈ %${formatNumber(riskPercent)}`
-                  : `≈ $${formatNumber(riskAmount)}`
-              }
-              filled
-            />
-            <Input
-              type="number"
-              label="Entry price"
-              prefix="$"
-              placeholder={DEFAULT_VALUES.entry}
-              value={entryState}
-              onChange={setEntry}
-              min={0}
-              max={100e6}
-              filled
-            />
-            <Input
-              type="number"
-              label="Stop-loss"
-              prefix="$"
-              placeholder={DEFAULT_VALUES.stopLoss}
-              value={stopLossState}
-              onChange={setStopLoss}
-              min={0}
-              max={100e6}
-              filled
-            />
-            <Input
-              type="number"
-              label="Take profit"
-              prefix="$"
-              placeholder={DEFAULT_VALUES.takeProfit}
-              value={takeProfitState}
-              onChange={setTakeProfit}
-              status={`Price change ≈ ${round(Math.abs(((takeProfit - entry) / entry) * 100), 2)}%`}
-              min={0}
-              max={100e6}
-              filled
-            />
-            <Input
-              type="number"
-              label="Max leverage"
-              prefix="X"
-              placeholder={DEFAULT_VALUES.maxLeverage}
-              value={maxLeverage}
-              onChange={setMaxLeverage}
-              min={1}
-              step={0.1}
-              filled
-            />
-          </div>
-
-          <Checkbox
-            label="Use discrete units for position size?"
-            checked={discrete}
-            onChange={setDiscrete}
+      {/* Input Section */}
+      <div className="flex w-full flex-col gap-4">
+        <div className="grid grid-cols-2 gap-3">
+          <Input
+            type="number"
+            label="Capital"
+            prefix="$"
+            placeholder={DEFAULT_VALUES.capital}
+            value={capitalState}
+            onChange={setCapital}
+            min={0}
+            max={100e6}
+            filled
+          />
+          <Input
+            type="number"
+            label="Risk amount"
+            prefix={
+              <div className="px-1 py-1" tabIndex={-1}>
+                <PopoverButton
+                  title={riskIsDollars ? '$' : '%'}
+                  closeOnPopoverClick
+                >
+                  <div className="flex flex-col gap-1 p-1">
+                    <Button
+                      size="sm"
+                      {...(riskIsDollars
+                        ? { filled: true }
+                        : { outline: true })}
+                      onClick={() => {
+                        if (!riskIsDollars) {
+                          setRiskIsDollars(true);
+                          setRisk(riskState == null ? undefined : riskAmount);
+                        }
+                      }}
+                      tabIndex={-1}
+                    >
+                      $
+                    </Button>
+                    <Button
+                      size="sm"
+                      {...(riskIsDollars
+                        ? { outline: true }
+                        : { filled: true })}
+                      onClick={() => {
+                        if (riskIsDollars) {
+                          setRiskIsDollars(undefined);
+                          setRisk(riskState == null ? undefined : riskPercent);
+                        }
+                      }}
+                      tabIndex={-1}
+                    >
+                      %
+                    </Button>
+                  </div>
+                </PopoverButton>
+              </div>
+            }
+            placeholder={formatNumber(
+              riskIsDollars
+                ? (DEFAULT_VALUES.riskPercent / 100) * capital
+                : DEFAULT_VALUES.riskPercent
+            )}
+            value={riskState}
+            onChange={setRisk}
+            min={0}
+            max={capital}
+            status={
+              riskIsDollars
+                ? `≈ %${formatNumber(riskPercent)}`
+                : `≈ $${formatNumber(riskAmount)}`
+            }
+            filled
+          />
+          <Input
+            type="number"
+            label="Entry price"
+            prefix="$"
+            placeholder={DEFAULT_VALUES.entry}
+            value={entryState}
+            onChange={setEntry}
+            min={0}
+            max={100e6}
+            filled
+          />
+          <Input
+            type="number"
+            label="Stop-loss"
+            prefix="$"
+            placeholder={DEFAULT_VALUES.stopLoss}
+            value={stopLossState}
+            onChange={setStopLoss}
+            min={0}
+            max={100e6}
+            filled
+          />
+          <Input
+            type="number"
+            label="Take profit"
+            prefix="$"
+            placeholder={DEFAULT_VALUES.takeProfit}
+            value={takeProfitState}
+            onChange={setTakeProfit}
+            status={`Price change ≈ ${round(Math.abs(((takeProfit - entry) / entry) * 100), 2)}%`}
+            min={0}
+            max={100e6}
+            filled
+          />
+          <Input
+            type="number"
+            label="Max leverage"
+            prefix="X"
+            placeholder={DEFAULT_VALUES.maxLeverage}
+            value={maxLeverage}
+            onChange={setMaxLeverage}
+            min={1}
+            step={0.1}
+            filled
           />
         </div>
 
-        {/* Summary Section */}
-        <div className="mx-auto rounded-2xl bg-gradient-to-tl from-gray-100 to-zinc-200 px-6 py-4 text-center dark:bg-gradient-to-tl dark:from-slate-600 dark:to-slate-700">
-          {isValid ? (
-            <div className="flex flex-col gap-3">
-              <div className="text-xl">
-                <div>{`${formatNumber(riskRewardRatio, 1)}R ${riskEmoji(round(riskRewardRatio, 1))}`}</div>
-                <div>
-                  Potential profit =
-                  <PrettyNumber value={potentialWin} prefix="$" strong />
-                </div>
-              </div>
-              {leverageLimitsRisk && (
-                <div>
-                  <em>
-                    Note: Due to the <Strong>max leverage limit</Strong>, you
-                    are effectively risking{' '}
-                    <Strong>
-                      <PrettyNumber value={actualRisk} prefix="$" />
-                    </Strong>{' '}
-                    instead of your full risk amount of{' '}
-                    <Strong>
-                      <PrettyNumber value={riskAmount} prefix="$" />
-                    </Strong>
-                    .
-                  </em>
-                </div>
-              )}
-            </div>
-          ) : (
-            <div className="text-lg">Check your numbers</div>
-          )}
-        </div>
+        <Checkbox
+          label="Use discrete units for position size?"
+          checked={discrete}
+          onChange={setDiscrete}
+        />
+      </div>
 
-        {/* Order Summary Section */}
-        <div className="w-full">
-          <h3>Position summary</h3>
-          <div className="min-w-full overflow-auto" tabIndex={-1}>
-            <Pairs
-              divide
-              data={[
-                {
-                  label: 'Quantity',
-                  content: (
-                    <Strong>
-                      <PrettyNumber value={positionSize} />
-                    </Strong>
-                  )
-                },
-                {
-                  label: 'Leverage',
-                  content: (
-                    <Strong>
-                      <PrettyNumber
-                        value={positionValue / capital}
-                        decimals={2}
-                        suffix="X"
-                      />
-                    </Strong>
-                  )
-                },
-                {
-                  label: 'Value',
-                  content: (
-                    <Strong>
-                      <PrettyNumber value={positionValue} prefix="$" />
-                    </Strong>
-                  )
-                }
-              ]}
-            />
+      {/* Summary Section */}
+      <div className="mx-auto rounded-2xl bg-gradient-to-tl from-gray-100 to-zinc-200 px-6 py-4 text-center dark:bg-gradient-to-tl dark:from-slate-600 dark:to-slate-700">
+        {isValid ? (
+          <div className="flex flex-col gap-3">
+            <div className="text-xl">
+              <div>{`${formatNumber(riskRewardRatio, 1)}R ${riskEmoji(round(riskRewardRatio, 1))}`}</div>
+              <div>
+                Potential profit =
+                <PrettyNumber value={potentialWin} prefix="$" strong />
+              </div>
+            </div>
+            {leverageLimitsRisk && (
+              <div>
+                <em>
+                  Note: Due to the <Strong>max leverage limit</Strong>, you are
+                  effectively risking{' '}
+                  <Strong>
+                    <PrettyNumber value={actualRisk} prefix="$" />
+                  </Strong>{' '}
+                  instead of your full risk amount of{' '}
+                  <Strong>
+                    <PrettyNumber value={riskAmount} prefix="$" />
+                  </Strong>
+                  .
+                </em>
+              </div>
+            )}
           </div>
-        </div>
+        ) : (
+          <div className="text-lg">Check your numbers</div>
+        )}
+      </div>
 
-        {/* Trailing Stops Section */}
-        <div>
-          <h3>Trailing stop</h3>
-          <p>
-            You can lock partial profits when the price changes beyond a given
-            amount of risk units.
-          </p>
-
-          <p>
-            For example: Lock <Strong>2R</Strong> worth of profit when the price
-            goes beyond <Strong>3R</Strong>.<br />
-            With the current settings, this would ensure a minimum profit of
-            <PrettyNumber prefix="$" value={2 * riskAmount} strong />
-            once the price {isShort ? 'falls below' : 'rises above'}
-            <PrettyNumber
-              value={entry + riskUnit * 2 * (isShort ? -1 : 1)}
-              prefix="$"
-              strong
-            />
-          </p>
-
-          <p>
-            <Strong>Hint:</Strong>
-            <br />
-            Add a trailing stop with <Strong>lock</Strong> set to{' '}
-            <Strong>0R</Strong> to reduce risk to
-            <PrettyNumber value={0} prefix="$" strong />
-            once the price reaches your <Strong>trigger</Strong>.
-          </p>
-
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <Input
-                type="number"
-                label="Trigger price"
-                placeholder={DEFAULT_VALUES.trailingStopPrice}
-                suffix="R"
-                value={trailingStopPriceState}
-                onChange={setTrailingStopPrice}
-                min={-1}
-                step={0.1}
-                filled
-              />
-              <div className="text-xs">
-                <div>
-                  Trigger =
+      {/* Order Summary Section */}
+      <div className="w-full">
+        <h3>Position summary</h3>
+        <div className="min-w-full overflow-auto" tabIndex={-1}>
+          <Pairs
+            divide
+            data={[
+              {
+                label: 'Quantity',
+                content: (
+                  <Strong>
+                    <PrettyNumber value={positionSize} />
+                  </Strong>
+                )
+              },
+              {
+                label: 'Leverage',
+                content: (
                   <Strong>
                     <PrettyNumber
-                      value={entry + trailingStopPrice * (entry - stopLoss)}
-                      decimals={10}
-                      prefix="$"
+                      value={positionValue / capital}
+                      decimals={2}
+                      suffix="X"
                     />
                   </Strong>
-                </div>
-              </div>
-            </div>
-            <div>
-              <Input
-                type="number"
-                label="Lock profit"
-                placeholder={DEFAULT_VALUES.trailingStopLock}
-                suffix="R"
-                value={trailingStopLockState}
-                onChange={setTrailingStopLock}
-                min={-1}
-                max={Math.floor(riskRewardRatio * 10) / 10}
-                step={0.1}
-                filled
-              />
-              <div className="text-xs">
-                <div>
-                  Limit =
+                )
+              },
+              {
+                label: 'Value',
+                content: (
                   <Strong>
-                    <PrettyNumber
-                      value={entry + trailingStopLock * (entry - stopLoss)}
-                      decimals={10}
-                      prefix="$"
-                    />
+                    <PrettyNumber value={positionValue} prefix="$" />
                   </Strong>
-                </div>
-                <div>
-                  Change =
-                  <Strong>
-                    <PrettyNumber
-                      value={
-                        100 *
-                        Math.abs(
-                          (entry + trailingStopLock * (entry - stopLoss)) /
-                            entry -
-                            1
-                        )
-                      }
-                      suffix="%"
-                    />
-                  </Strong>
-                </div>
-                <div>
-                  {trailingStopLock > 0 ? (
-                    <>
-                      Min profit =
-                      <Strong>
-                        <PrettyNumber
-                          value={positionSize * (riskUnit * trailingStopLock)}
-                          prefix="$"
-                        />
-                      </Strong>
-                    </>
-                  ) : (
-                    <>
-                      Max loss =
-                      <Strong>
-                        <PrettyNumber
-                          value={Math.abs(
-                            positionSize * riskUnit * trailingStopLock
-                          )}
-                          prefix="$"
-                        />
-                      </Strong>
-                    </>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <p>
-            Keep in mind that setting <Strong>lock</Strong> to a value close to{' '}
-            <Strong>trigger</Strong> increases the chance that small price
-            movements might trigger the close.
-          </p>
+                )
+              }
+            ]}
+          />
         </div>
       </div>
-    </>
+
+      {/* Trailing Stops Section */}
+      <div>
+        <h3>Trailing stop</h3>
+        <p>
+          You can lock partial profits when the price changes beyond a given
+          amount of risk units.
+        </p>
+
+        <p>
+          For example: Lock <Strong>2R</Strong> worth of profit when the price
+          goes beyond <Strong>3R</Strong>.<br />
+          With the current settings, this would ensure a minimum profit of
+          <PrettyNumber prefix="$" value={2 * riskAmount} strong />
+          once the price {isShort ? 'falls below' : 'rises above'}
+          <PrettyNumber
+            value={entry + riskUnit * 2 * (isShort ? -1 : 1)}
+            prefix="$"
+            strong
+          />
+        </p>
+
+        <p>
+          <Strong>Hint:</Strong>
+          <br />
+          Add a trailing stop with <Strong>lock</Strong> set to{' '}
+          <Strong>0R</Strong> to reduce risk to
+          <PrettyNumber value={0} prefix="$" strong />
+          once the price reaches your <Strong>trigger</Strong>.
+        </p>
+
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <Input
+              type="number"
+              label="Trigger price"
+              placeholder={DEFAULT_VALUES.trailingStopPrice}
+              suffix="R"
+              value={trailingStopPriceState}
+              onChange={setTrailingStopPrice}
+              min={-1}
+              step={0.1}
+              filled
+            />
+            <div className="text-xs">
+              <div>
+                Trigger =
+                <Strong>
+                  <PrettyNumber
+                    value={entry + trailingStopPrice * (entry - stopLoss)}
+                    decimals={10}
+                    prefix="$"
+                  />
+                </Strong>
+              </div>
+            </div>
+          </div>
+          <div>
+            <Input
+              type="number"
+              label="Lock profit"
+              placeholder={DEFAULT_VALUES.trailingStopLock}
+              suffix="R"
+              value={trailingStopLockState}
+              onChange={setTrailingStopLock}
+              min={-1}
+              max={Math.floor(riskRewardRatio * 10) / 10}
+              step={0.1}
+              filled
+            />
+            <div className="text-xs">
+              <div>
+                Limit =
+                <Strong>
+                  <PrettyNumber
+                    value={entry + trailingStopLock * (entry - stopLoss)}
+                    decimals={10}
+                    prefix="$"
+                  />
+                </Strong>
+              </div>
+              <div>
+                Change =
+                <Strong>
+                  <PrettyNumber
+                    value={
+                      100 *
+                      Math.abs(
+                        (entry + trailingStopLock * (entry - stopLoss)) /
+                          entry -
+                          1
+                      )
+                    }
+                    suffix="%"
+                  />
+                </Strong>
+              </div>
+              <div>
+                {trailingStopLock > 0 ? (
+                  <>
+                    Min profit =
+                    <Strong>
+                      <PrettyNumber
+                        value={positionSize * (riskUnit * trailingStopLock)}
+                        prefix="$"
+                      />
+                    </Strong>
+                  </>
+                ) : (
+                  <>
+                    Max loss =
+                    <Strong>
+                      <PrettyNumber
+                        value={Math.abs(
+                          positionSize * riskUnit * trailingStopLock
+                        )}
+                        prefix="$"
+                      />
+                    </Strong>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p>
+          Keep in mind that setting <Strong>lock</Strong> to a value close to{' '}
+          <Strong>trigger</Strong> increases the chance that small price
+          movements might trigger the close.
+        </p>
+      </div>
+    </div>
   );
 }
 

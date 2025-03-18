@@ -25,10 +25,11 @@ export function ThemeToggle() {
   return (
     <button
       className={cn(
-        'fixed bottom-2.5 right-2.5 z-[10000] h-9 w-9 rounded-full bg-slate-700 p-2 text-white outline-none transition-transform duration-300 dark:bg-white dark:text-black',
+        'fixed bottom-2.5 z-[10000] h-9 w-9 rounded-full bg-slate-700 p-2 text-white outline-none transition-all duration-300 dark:bg-white dark:text-black',
         isDark ? 'rotate-0' : 'rotate-180'
       )}
       onClick={() => setIsDark(!isDark)}
+      style={{ right: `calc(10px + env(safe-area-inset-right))` }}
     >
       {isDark ? <MdOutlineDarkMode /> : <MdOutlineLightMode />}
     </button>

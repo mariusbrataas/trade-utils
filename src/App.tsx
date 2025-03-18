@@ -1,5 +1,6 @@
 import { PropsWithChildren } from 'react';
 import { Button } from './components/Button';
+import { ThemeToggle } from './components/ThemeToggle';
 import './globals.scss';
 import { useSearchParam } from './hooks/useSearchParam';
 import FibPositionSizing from './pages/FibPositionSizing';
@@ -7,12 +8,13 @@ import PositionSizing from './pages/PositionSizing';
 
 function Main({ children }: PropsWithChildren) {
   return (
-    <main className="flex items-center justify-center bg-gradient-to-br from-red-100 to-sky-200 dark:bg-gradient-to-tl dark:from-gray-950 dark:to-gray-900">
+    <main className="relative flex items-center justify-center bg-gradient-to-br from-red-100 to-sky-200 dark:bg-gradient-to-tl dark:from-gray-950 dark:to-gray-900">
       <div className="m-2 flex w-dvw min-w-32 max-w-[95vw] flex-col gap-5 overflow-hidden rounded-2xl bg-white px-6 py-5 text-center sm:w-fit sm:rounded-lg dark:bg-slate-800 dark:text-white">
         <div className="flex w-full flex-col items-start justify-between gap-6">
           {children}
         </div>
       </div>
+      <ThemeToggle />
     </main>
   );
 }

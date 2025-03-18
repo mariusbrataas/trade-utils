@@ -122,7 +122,12 @@ body {
   > main {
     min-height: 100dvh;
     // padding-top: 80px;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right)
+      env(safe-area-inset-bottom) env(safe-area-inset-left);
   }
+
+  // padding: env(safe-area-inset-top) env(safe-area-inset-right)
+  //   env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 
 .hideScrollbar {
@@ -186,4 +191,16 @@ input::-webkit-inner-spin-button {
 
 input[type='number'] {
   -moz-appearance: textfield; /* Firefox */
+}
+
+@keyframes press {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.92);
+  }
+  to {
+    transform: scale(1);
+  }
 }
